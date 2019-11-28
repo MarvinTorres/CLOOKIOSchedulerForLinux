@@ -79,13 +79,13 @@ static void clook_add_request(struct request_queue *q, struct request *rq)
 	//Show direction and sector of added request
 	show_added_request(rq);	
 
-	struct list_head *itr;
- 
+	struct list_head *itr = NULL;
+ 	request *curr_request = NULL;
 	sector_t sector = blk_rq_pos(rq);
 
 	if (sector >= head) {
 	   list_for_each(itr, &cd->queue) {
-		 = list_entry(itr, , );
+		 curr_request = list_entry(itr, struct request, queuelist);
 	   }
 	} else {
 
