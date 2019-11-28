@@ -75,13 +75,13 @@ static int clook_dispatch(struct request_queue *q, int force)
 static void clook_add_request(struct request_queue *q, struct request *rq)
 {
 	struct clook_data *cd = q->elevator->elevator_data;
-
+ 	struct request *curr_request = NULL;
+	sector_t sector = blk_rq_pos(rq);
+	
 	//Show direction and sector of added request
 	show_added_request(rq);	
 
 	struct list_head *itr = NULL;
- 	struct request *curr_request = NULL;
-	sector_t sector = blk_rq_pos(rq);
 
 	if (sector >= head) {
 	   list_for_each(itr, &cd->queue) {
