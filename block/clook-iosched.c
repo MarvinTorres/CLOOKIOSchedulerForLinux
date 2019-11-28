@@ -80,7 +80,7 @@ static void clook_add_request(struct request_queue *q, struct request *rq)
 	show_added_request(rq);	
 
 	struct list_head *itr = NULL;
- 	request *curr_request = NULL;
+ 	struct request *curr_request = NULL;
 	sector_t sector = blk_rq_pos(rq);
 
 	if (sector >= head) {
