@@ -83,6 +83,9 @@ static void clook_add_request(struct request_queue *q, struct request *rq)
 	//Show direction and sector of added request
 	show_added_request(rq);	
 
+	list_add_tail(&rq->queuelist, &cd->queue);	
+	return;
+	
 	if (list_empty(&cd->queue)) {
 		list_add_tail(&rq->queuelist, &cd->queue);	
 		return;
