@@ -1,5 +1,10 @@
 /*
- * elevator c-look
+ * elevator clook
+ *
+ * The CLOOK I/O scheduler minimizes backtracking by satisfying requests 
+ * in one direction. When it satisfies the last request in its path, it 
+ * backtracks to the request that lets it hit the most requests possible
+ * in its subsequent path. 
  */
 #include <linux/blkdev.h>
 #include <linux/elevator.h>
@@ -63,8 +68,8 @@ static int clook_dispatch(struct request_queue *q, int force)
 		list_del_init(&rq->queuelist);
 		//Show direction and sector of dispatched request
 		show_dispatched_request(rq);
-		//Sector of dispatched request is also the sector position of the
-		//read+write head, so save it to set up the request list
+		//Sector of dispatched request is visited by the head. So
+		//save this sector since it is also the head's sector position
 		head = blk_rq_pos(rq);
 		elv_dispatch_sort(q, rq);
 		return 1;
@@ -82,33 +87,49 @@ static void clook_add_request(struct request_queue *q, struct request *rq)
 	
 	//Show direction and sector of added request
 	show_added_request(rq);	
-
-	//list_add_tail(&rq->queuelist, &cd->queue);	
-	//return;
 	
 	if (list_empty(&cd->queue)) {
 		list_add_tail(&rq->queuelist, &cd->queue);	
 		return;
 	}
 	
+	/*
+	 * 
+	 * Note the possibility of starvation if high priority requests
+	 * are added before a low priority request can be satisfied. 
+	 * This function does not address this issue.
+	 */
 	if (sector >= head) { //high priority
 		list_for_each(itr, &cd->queue) {
 			curr_request = list_entry(itr, struct request, queuelist);
 			curr_sector = blk_rq_pos(curr_request);
 			if (curr_sector < head || sector <= curr_sector) {
+				/*
+				 * This request has reached the start of the low 
+				 * priority area or found the right insertion
+				 * spot, so append it to the end of the high 
+				 * priority area or add it to that spot.
+				 */
 				list_add_tail(&rq->queuelist, itr);
 				return;		
 			} else if (list_is_last(itr, &cd->queue)) {
 				/*
-				 * TODO: FILL THIS OUT
-				 * 
+				 * This request has not found the right
+				 * insertion spot nor reached the start
+				 * of the low priority area but reached
+				 * the end of the list. This means that
+				 * the only requests in the list are
+				 * high priority so it add it to the
+				 * end of the list.
 				 */
 				list_add(&rq->queuelist, itr);
 				return;
 			} else {
 				/*
 				 * This request is in the high priority area but
-				 * is not in the right insertion spot, so skip
+				 * is not in the right insertion spot. In addition
+				 * it has not reached the end of the list. So 
+				 * move to the next request in the list.
 				 */
 				;
 			}
