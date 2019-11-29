@@ -43,12 +43,11 @@ config IOSCHED_CLOOK
 	tristate "CLOOK I/O scheduler"
 	default y
 	---help---
-	  The CLOOK I/O scheduler dispatches requests in increasing 
-	  sector number starting from the sector last visited by the head
-	  before backtracking to the request with the lowest numbered 
-	  sector and starting again. It does not dispatch requests during
-	  the backtracking phase. 
-
+	  The CLOOK I/O scheduler minimizes backtracking by satisfying requests 
+	  in one direction. When it satisfies the last request in its path, it 
+	  backtracks to the request that lets it hit the most requests possible
+	  in its subsequent path. 
+	  
 choice
 	prompt "Default I/O scheduler"
 	default DEFAULT_CFQ
