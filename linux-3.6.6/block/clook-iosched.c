@@ -124,10 +124,11 @@ static void clook_add_request(struct request_queue *q, struct request *rq)
 			curr_sector = blk_rq_pos(curr_request);
 			if (curr_sector < head || sector <= curr_sector) {
 				/*
-				 * This request has reached the start of the low 
-				 * priority area or found the right insertion
-				 * spot, so append it to the end of the high 
-				 * priority area or add it to that spot.
+				 * This request has reached the start of the 
+				 * low priority area or found the right 
+				 * insertion spot, so append it to the end 
+				 * of the high priority area or add it to 
+				 * that spot.
 				 */
 				list_add_tail(&rq->queuelist, itr);
 				return;		
@@ -138,17 +139,18 @@ static void clook_add_request(struct request_queue *q, struct request *rq)
 				 * of the low priority area but reached
 				 * the end of the list. This means that
 				 * the only requests in the list are
-				 * high priority so it add it to the
-				 * end of the list.
+				 * high priority so it add it to 
+				 * the end of the list.
 				 */
 				list_add(&rq->queuelist, itr);
 				return;
 			} else {
 				/*
-				 * This request is in the high priority area but
-				 * is not in the right insertion spot. In addition
-				 * it has not reached the end of the list. So 
-				 * move to the next request in the list.
+				 * This request is in the high priority area 
+				 * but is not in the right insertion spot. 
+				 * In addition it has not reached the 
+				 * end of the list. So move to 
+				 * the next request in the list.
 				 */
 				;
 			}
@@ -166,18 +168,20 @@ static void clook_add_request(struct request_queue *q, struct request *rq)
 				return;				
 			} else if (list_is_last(itr, &cd->queue)) { 
 				/* 
-				 * If the request reached the end of the list before
-				 * finding the low priority area, then it must
-				 * be the first low priority request. So add it right 
-				 * after the last high priority request.
+				 * If the request reached the end of the list 
+				 * before finding the low priority area, then 
+				 * it must be the first low priority request. 
+				 * So add it right after the 
+				 * last high priority request.
 				 */
 				list_add(&rq->queuelist, itr);
 				return;
 			} else {
 				/* This request is in the low priority area but
-				 * is not in the right insertion spot. In addition
-				 * it has not reached the end of the list. So 
-				 * move to the next request in the list.
+				 * is not in the right insertion spot. 
+				 * In addition, it has not reached 
+				 * the end of the list. So move to 
+				 * the next request in the list.
 				 */
 				;
 			}
