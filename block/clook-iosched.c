@@ -114,6 +114,8 @@ static void clook_add_request(struct request_queue *q, struct request *rq)
 			} else if (list_is_last(itr, &cd->queue)) {
 				list_add(&rq->queuelist, itr);
 				return;
+			} else {
+				printk("ERROR!");
 			}
 		}
 	} else { //low priority
@@ -139,6 +141,8 @@ static void clook_add_request(struct request_queue *q, struct request *rq)
 			} else if (list_is_last(itr, &cd->queue)) {
 				list_add(&rq->queuelist, itr);
 				return;
+			} else {
+				printk("ERROR!");
 			}
 		}
 	}
