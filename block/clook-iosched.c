@@ -91,21 +91,52 @@ static void clook_add_request(struct request_queue *q, struct request *rq)
 		return;
 	}
 	
-	if (sector >= head) {
+	if (sector >= head) { //high priority
 		list_for_each(itr, &cd->queue) {
 			curr_request = list_entry(itr, struct request, queuelist);
 			curr_sector = blk_rq_pos(curr_request);
-			if (curr_sector >= head && sector <= curr_sector) {
+			if (curr_sector < head) {
+				/* 
+				 * Keep skipping until first low priority request
+				 * is found. This is to ensure that high priority
+				 * requests remain in the front of the list.
+				 *
+				 * If no low priority requests are found in the list, 
+				 * then add this low priority request right after
+				 * the last high priority request.
+				 */
+				if (list_is_last(itr)) {
+					list_add(&rq->queuelist, itr);
+				}
+			} else if (sector <= curr_sector) {
 				list_add_tail(&rq->queuelist, itr);
 				return;
+			} else if (list_is_last(itr)) {
+				list_add(&rq->queuelist, itr);
+				return;
 			}
-		}
-	} else {
+	} else { //low priority
 		list_for_each(itr, &cd->queue) {
 			curr_request = list_entry(itr, struct request, queuelist);
 			curr_sector = blk_rq_pos(curr_request);
-			if (curr_sector < head && sector <= curr_sector) {
+			if (curr_sector >= head) {
+				/* 
+				 * Keep skipping until first low priority request
+				 * is found. This is to ensure that high priority
+				 * requests remain in the front of the list.
+				 *
+				 * If no low priority requests are found in the list, 
+				 * then add this low priority request right after
+				 * the last high priority request.
+				 */
+				if (list_is_last(itr)) {
+					list_add(&rq->queuelist, itr);
+				}
+			} else if (sector <= curr_sector) {
 				list_add_tail(&rq->queuelist, itr);
+				return;
+			} else if (list_is_last(itr)) {
+				list_add(&rq->queuelist, itr);
 				return;
 			}
 		}
