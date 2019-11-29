@@ -108,10 +108,7 @@ static void clook_add_request(struct request_queue *q, struct request *rq)
 				if (list_is_last(itr, &cd->queue)) {
 					list_add(&rq->queuelist, itr);
 				}
-			} else if (sector <= curr_sector) {
-				list_add_tail(&rq->queuelist, itr);
-				return;
-			} else if (list_is_last(itr, &cd->queue)) {
+			} else if (sector <= curr_sector || list_is_last(itr, &cd->queue)) {
 				list_add(&rq->queuelist, itr);
 				return;
 			} else {
@@ -135,10 +132,7 @@ static void clook_add_request(struct request_queue *q, struct request *rq)
 				if (list_is_last(itr, &cd->queue)) {
 					list_add(&rq->queuelist, itr);
 				}
-			} else if (sector <= curr_sector) {
-				list_add_tail(&rq->queuelist, itr);
-				return;
-			} else if (list_is_last(itr, &cd->queue)) {
+			} else if (sector <= curr_sector || list_is_last(itr, &cd->queue)) {
 				list_add(&rq->queuelist, itr);
 				return;
 			} else {
