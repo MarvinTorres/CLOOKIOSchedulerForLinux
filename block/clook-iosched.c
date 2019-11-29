@@ -105,13 +105,13 @@ static void clook_add_request(struct request_queue *q, struct request *rq)
 				 * then add this low priority request right after
 				 * the last high priority request.
 				 */
-				if (list_is_last(itr)) {
+				if (list_is_last(itr, &cd->queue)) {
 					list_add(&rq->queuelist, itr);
 				}
 			} else if (sector <= curr_sector) {
 				list_add_tail(&rq->queuelist, itr);
 				return;
-			} else if (list_is_last(itr)) {
+			} else if (list_is_last(itr, &cd->queue)) {
 				list_add(&rq->queuelist, itr);
 				return;
 			}
@@ -130,13 +130,13 @@ static void clook_add_request(struct request_queue *q, struct request *rq)
 				 * then add this low priority request right after
 				 * the last high priority request.
 				 */
-				if (list_is_last(itr)) {
+				if (list_is_last(itr, &cd->queue)) {
 					list_add(&rq->queuelist, itr);
 				}
 			} else if (sector <= curr_sector) {
 				list_add_tail(&rq->queuelist, itr);
 				return;
-			} else if (list_is_last(itr)) {
+			} else if (list_is_last(itr, &cd->queue)) {
 				list_add(&rq->queuelist, itr);
 				return;
 			}
