@@ -111,8 +111,8 @@ static void clook_add_request(struct request_queue *q, struct request *rq)
 	 *
 	 * A request is high priority if it can be satisfied in the
 	 * head's path. (recall that the head satisfies requests in one
-	 * direction.) It is low priority if the head must start a new path
-	 * to satisfy it.
+	 * direction.) It is low priority if the head must backtrack and 
+	 * start a new path to satisfy it.
 	 *
 	 * Note the possibility of starvation if high priority requests
 	 * are added before a low priority request can be satisfied. 
@@ -157,27 +157,28 @@ static void clook_add_request(struct request_queue *q, struct request *rq)
 		list_for_each(itr, &cd->queue) {
 			curr_request = list_entry(itr, struct request, queuelist);
 			curr_sector = blk_rq_pos(curr_request);
-			if (curr_sector >= head) {
-				/* 
-				 * Keep skipping until first low priority request
-				 * is found. This is to ensure that high priority
-				 * requests remain in the front of the list.
-				 *
-				 * If no low priority requests are found in the list, 
-				 * then add this low priority request right after
-				 * the last high priority request.
+			if (curr_sector < head && sector <= curr_sector) {
+				/*
+				 * The request is in the low priority area and
+				 * found the right insertion spot, so add it.
 				 */
-				if (list_is_last(itr, &cd->queue)) {
-					list_add(&rq->queuelist, itr);
-					return;
-				}
-			} else if (sector <= curr_sector) {
 				list_add_tail(&rq->queuelist, itr);
 				return;				
-			} else if (list_is_last(itr, &cd->queue)) {
+			} else if (list_is_last(itr, &cd->queue)) { 
+				/* 
+				 * If the request reached the end of the list before
+				 * finding the low priority area, then it must
+				 * be the first low priority request. So add it right 
+				 * after the last high priority request.
+				 */
 				list_add(&rq->queuelist, itr);
 				return;
 			} else {
+				/* This request is in the low priority area but
+				 * is not in the right insertion spot. In addition
+				 * it has not reached the end of the list. So 
+				 * move to the next request in the list.
+				 */
 				;
 			}
 		}
