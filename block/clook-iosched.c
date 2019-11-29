@@ -115,6 +115,7 @@ static void clook_add_request(struct request_queue *q, struct request *rq)
 				list_add(&rq->queuelist, itr);
 				return;
 			}
+		}
 	} else { //low priority
 		list_for_each(itr, &cd->queue) {
 			curr_request = list_entry(itr, struct request, queuelist);
