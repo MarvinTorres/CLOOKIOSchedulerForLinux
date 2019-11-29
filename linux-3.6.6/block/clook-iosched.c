@@ -79,22 +79,41 @@ static int clook_dispatch(struct request_queue *q, int force)
 
 static void clook_add_request(struct request_queue *q, struct request *rq)
 {
+	/*
+	 * clook_data	The request list
+	 * curr_request The current request in the request list. Used
+	 *		to place the incoming request in the right spot
+	 *		in the request list
+	 * sector	The sector of the incoming request.
+	 * curr_sector	The sector of the current request in request list.
+	 *		Used to place the incoming request in the right
+	 *		spot in the request list.
+	 */
 	struct clook_data *cd = q->elevator->elevator_data;
- 	struct request *curr_request = NULL;
-	sector_t sector = blk_rq_pos(rq);
-	sector_t curr_sector = 0L;
-	struct list_head *itr = NULL;
+ 	struct request *curr_request = NULL;		
+	sector_t sector = blk_rq_pos(rq);		
+	sector_t curr_sector = 0L;			
+	struct list_head *itr = NULL;			
 	
 	//Show direction and sector of added request
 	show_added_request(rq);	
 	
 	if (list_empty(&cd->queue)) {
+		//Request is working with an empty list, so add it
 		list_add_tail(&rq->queuelist, &cd->queue);	
 		return;
 	}
 	
 	/*
-	 * 
+	 * The incoming request is either high or low priority. High
+	 * priority requests go in front of the queue and low priority
+	 * requests go in back of the queue.
+	 *
+	 * A request is high priority if it can be satisfied in the
+	 * head's path. (recall that the head satisfies requests in one
+	 * direction.) It is low priority if the head must start a new path
+	 * to satisfy it.
+	 *
 	 * Note the possibility of starvation if high priority requests
 	 * are added before a low priority request can be satisfied. 
 	 * This function does not address this issue.
