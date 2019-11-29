@@ -99,9 +99,17 @@ static void clook_add_request(struct request_queue *q, struct request *rq)
 				list_add_tail(&rq->queuelist, itr);
 				return;		
 			} else if (list_is_last(itr, &cd->queue)) {
+				/*
+				 * TODO: FILL THIS OUT
+				 * 
+				 */
 				list_add(&rq->queuelist, itr);
 				return;
 			} else {
+				/*
+				 * This request is in the high priority area but
+				 * is not in the right insertion spot, so skip
+				 */
 				;
 			}
 		}
