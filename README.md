@@ -36,7 +36,7 @@ Use the patch or patchless steps, either will work.
 
 ##### Steps
 1. [Download Linux 3.6.6](https://launchpad.net/linux/3.6/3.6.6).
-1. Find the root folder but do not enter it.
+1. Find the root folder but do not enter it. It should be called `linux-3.6.6`.
 1. Move folder `linux-3.6.6` from this repo to the same directory as the root folder, and overwrite files when prompted.
 1. In the root folder, run the makefile.
 
