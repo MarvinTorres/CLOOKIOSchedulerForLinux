@@ -26,7 +26,7 @@ Use the patch or patchless steps, either will work.
 1. In Git Bash, apply `clook.patch` to `noop-iosched.o`
   * `noop-iosched.o` is already in the `block` folder.
   * `patch -u noop-iosched.o -i clook.patch`
-1. Move `Kconfig.iosched` and `Makefile` from this repo's `linux-3.6.6/block` to 3.6.6's `block`, and overwrite files when prompted.
+1. Move files `Kconfig.iosched` and `Makefile` from this repo's `linux-3.6.6/block` to 3.6.6's `block`, and overwrite files when prompted.
 1. In the root folder, run the makefile.
 
 ### Patchless
@@ -37,7 +37,7 @@ Use the patch or patchless steps, either will work.
 ##### Steps
 1. [Download Linux 3.6.6](https://launchpad.net/linux/3.6/3.6.6).
 1. Find the root folder but do not enter it.
-1. Move `linux-3.6.6` from this repo to the same directory as the root folder, and overwrite files when prompted.
+1. Move folder `linux-3.6.6` from this repo to the same directory as the root folder, and overwrite files when prompted.
 1. In the root folder, run the makefile.
 
 ## Permissions
